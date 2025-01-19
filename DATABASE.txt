@@ -1,0 +1,58 @@
+CREATE DATABASE EmployeeManagementSystem;
+
+USE EmployeeManagementSystem;
+
+-- Create Role Table
+CREATE TABLE Role (
+    RoleID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleName VARCHAR(50) NOT NULL
+);
+
+INSERT INTO Role (RoleName) 
+VALUES 
+('Manager'),
+('Employee');
+
+
+-- Create EmployerUser Table
+CREATE TABLE EmployerUser (
+    Id INT AUTO_INCREMENT PRIMARY KEY, -- Unique Identifier for Each User
+    Name VARCHAR(100) NOT NULL,        -- Name of the User
+    Email VARCHAR(255) NOT NULL UNIQUE, -- Email Address (Unique)
+    Password VARCHAR(255) NOT NULL,    -- Hashed Password
+    RoleId INT NOT NULL,               -- Role (Manager/Employee)
+    ManagerId INT DEFAULT NULL,        -- Manager Assigned (Nullable)
+    FOREIGN KEY (RoleId) REFERENCES Role(RoleID) 
+        ON DELETE CASCADE ON UPDATE CASCADE, -- Cascading for Role
+    FOREIGN KEY (ManagerId) REFERENCES EmployerUser(Id) 
+        ON DELETE SET NULL ON UPDATE CASCADE -- Cascading for Manager
+);
+
+-- Create EmployeeComments Table
+CREATE TABLE EmployeeComments (
+    Id INT AUTO_INCREMENT PRIMARY KEY,      -- Unique Identifier for Each Comment
+    EmployeeUserId INT NOT NULL,            -- ID of the Employee the Comment is About
+    AddedById INT NOT NULL,                 -- ID of the Manager Who Added the Comment
+    CommentText TEXT NOT NULL,              -- Text of the Comment
+    CommentDateTime DATETIME DEFAULT CURRENT_TIMESTAMP, -- Timestamp for the Comment
+    FOREIGN KEY (EmployeeUserId) REFERENCES EmployerUser(Id) 
+        ON DELETE CASCADE ON UPDATE CASCADE, -- Cascading for Employee
+    FOREIGN KEY (AddedById) REFERENCES EmployerUser(Id) 
+        ON DELETE CASCADE ON UPDATE CASCADE -- Cascading for Manager
+);
+
+-- Assuming the roles exist, you can insert a user with a valid RoleId
+INSERT INTO EmployerUser (Name, Email, Password, RoleId, ManagerId)
+VALUES ('John Doe', 'john.doe@example.com', 'hashed_password', 1, NULL);  -- RoleId 1 for Manager
+
+
+
+INSERT INTO EmployerUser (Name, Email, Password, RoleId, ManagerId)
+VALUES ('John Doe', 'john.doe@example.com', 'hashed_password', 1, NULL);
+
+
+
+INSERT INTO EmployerUser (Name, Email, Password, RoleId, ManagerId)
+VALUES ('Jane Smith', 'jane.smith@example.com', 'hashed_password', 2, 3);
+
+
